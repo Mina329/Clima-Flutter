@@ -1,12 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
+import 'package:clima/services/weather.dart';
 
 class LocationScreen extends StatefulWidget {
+  final decodedData;
+  LocationScreen({this.decodedData});
   @override
   _LocationScreenState createState() => _LocationScreenState();
 }
 
 class _LocationScreenState extends State<LocationScreen> {
+  WeatherModel weather = WeatherModel();
+  late int temprature;
+  late String weatherIcon;
+  String? cityName;
+  late String weatherDesc;
+  @override
+  void initState() {
+    super.initState();
+    UpdateUI(widget.decodedData);
+  }
+
+  void UpdateUI(dynamic decodeData) {
+    setState(() {
+      double temp = decodeData['main']['temp'];
+      temprature = temp.toInt();
+      var condition = decodeData['weather'][0]['id'];
+      weatherIcon = weather.getWeatherIcon(condition);
+      cityName = decodeData['name'];
+      weatherDesc = weather.getMessage(temprature);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,11 +74,11 @@ class _LocationScreenState extends State<LocationScreen> {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      '32°',
+                      '$temprature°',
                       style: kTempTextStyle,
                     ),
                     Text(
-                      '☀️',
+                      weatherIcon,
                       style: kConditionTextStyle,
                     ),
                   ],
@@ -62,7 +87,7 @@ class _LocationScreenState extends State<LocationScreen> {
               Padding(
                 padding: EdgeInsets.only(right: 15.0),
                 child: Text(
-                  "It's 🍦 time in San Francisco!",
+                  "$weatherDesc in $cityName!",
                   textAlign: TextAlign.right,
                   style: kMessageTextStyle,
                 ),
@@ -74,6 +99,3 @@ class _LocationScreenState extends State<LocationScreen> {
     );
   }
 }
-// double temprature = decodedData['main']['temp'];
-// int condition = decodedData['weather'][0]['id'];
-// String cityName = decodedData['name'];
