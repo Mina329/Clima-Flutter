@@ -7,6 +7,11 @@ const openweatherurl ='https://api.openweathermap.org/data/2.5/weather';
 
 class WeatherModel {
 
+  Future<dynamic> getcityweather(String cityName) async{
+    NetworkHelper helper = NetworkHelper(url: Uri.parse('$openweatherurl?q=$cityName&appid=$apikey&units=metric'));
+    var decodedData = await helper.getData();
+    return decodedData;
+  }
 
 
   Future<dynamic> getweatherdate() async{
